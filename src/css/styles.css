@@ -1,0 +1,575 @@
+body{
+    height: 100%;
+    font-family: Verdana;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    background-color: #333;
+    opacity: 90%;
+}
+.app{
+    display: flex;
+    align-items: stretch;
+    flex-flow: row nowrap;
+}
+.gutter1,.gutter2{
+    flex:1 1 auto;
+    position: relative;
+}
+
+main{
+    max-width:800px;
+    flex:1 1 75%;
+    position: relative;
+    grid-column: 2/7;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+.wall{
+    background-color: #bba110;
+    display:flex;
+    flex-flow: column nowrap;
+    height: 100%;
+}
+.topWall{
+    flex:1 1 20%;
+}
+.molding{
+    flex: 0 0 40px;
+    background: url("../png/molding.png") #bba110 repeat;
+}
+.wallPaper{
+    flex: 2 2 80%;
+    background: url("../png/bg4.png") #bba110 repeat;
+}
+.hat{
+    width: 20px;
+    display: none;
+}
+.hatAfter{
+    position: absolute;
+    display: block;
+    z-index:100;
+    display:none;
+    width: 50px;
+    transition: width 1s, height 1s;
+}
+.bust{
+    position: absolute;
+    z-index:100;
+    bottom: 0;
+}
+.bust .hungHat{
+    margin-left: 15px;
+    position: absolute;
+    z-index:100;
+    width: 50px;
+}
+.bust .hat1{
+    margin-top: -20%;
+}
+.bust .hat2{
+    margin-top: -25%;
+}
+.bust .hat3{
+    margin-top: -35%;
+}
+.bust .hat4{
+    margin-top: -20%;
+}
+.bust .hat5{
+    margin-top: -40%;
+}
+.bust .hat6{
+    margin-top: -45%;
+}
+.busts{
+    position:absolute;
+    left: 0;
+    border-bottom: 2px solid #333;
+    width: 100%;
+}
+@keyframes hookWheel {
+    0% {transform:  rotate(0deg)}
+    100% {transform:  rotate(-360deg)}
+}
+.hookWheel{
+    position: absolute;
+    top: 0;
+    left: calc(50% - 75px);
+    margin-top: -75px;
+    width: 150px;
+}
+.hookWheel img{
+    z-index: 20;
+}
+.hook{
+    position: absolute;
+    width: 20px;
+    z-index: 10;
+}
+.hook img {
+    z-index: 10;
+}
+.hook.hook1{
+    left: 49%;
+    margin-top: -3px;
+}
+.hook.hook2{
+    top:38%;
+    left:0;
+    transform:rotate(90deg);
+    margin-left:-33px;
+}
+.hook.hook3{
+    top:0;
+    left:40%;
+    transform:rotate(180deg);
+    margin-top:-50px;
+}
+.hook.hook4{
+    top:30%;
+    left:100%;
+    transform:rotate(270deg);
+    margin-left:14px;
+}
+.hook .hookedHat{
+    width: 50px;
+    position: absolute;
+    margin-left: -30px;
+    top: 60%;
+    transform: rotate(-45deg);
+}
+.banner{
+    width: 400px;
+    position: absolute;
+    z-index: 200;
+    top: calc(50% - 175px);
+    left: calc(50% - 200px)
+}
+.instructions{
+    width: 350px;
+    position: absolute;
+    z-index: 200;
+    top: calc(50% - 150px);
+    left: calc(50% - 175px)
+}
+.scoreCard {
+    width: 350px;
+    height: 300px;
+    position: absolute;
+    z-index: 200;
+    top: calc(50% - 180px);
+    left: calc(50% - 175px);
+    background: no-repeat center/100% url("../svg/scoreCard.svg");
+}
+.scoreCardContent {
+    font-family: helvetica, arial;
+    font-size: 18px;
+    color: #555;
+    padding: 100px 30px 0 10px;
+    text-align: center;
+}
+.settingsIcon, .backArrow, .speedSprite {
+    position: absolute;
+    left: calc(50% - 20px);
+}
+.settingsIcon {
+    width: 30px;
+    top: 20px;
+}
+.backArrow{
+    width: 30px;
+    top: 70px;
+}
+.speedSprite {
+    top: 120px;
+    width: 39px;
+    overflow: hidden;
+}
+.speedSprite .gauge1,.speedSprite .gauge2,.speedSprite .gauge3,.speedSprite .gauge4 {
+    positon:absolute;
+    top: 0;
+}
+.speedSprite .gauge {
+    left: 0;
+    height: 8px;
+}
+.speedSprite .gauge1 {
+    margin-left:-45px;
+    height: 8px;
+}
+.speedSprite .gauge2 {
+    margin-left: -90px;
+    height: 8px;
+}
+.speedSprite .gauge3 {
+    margin-left: -134px;
+    height: 8px;
+}
+.speedSprite .gauge4 {
+    margin-left: -178px;
+    height: 8px;
+}
+.speedLabel {
+    font-size: 10px;
+    color: #fff;
+    font-family: helvetica, arial;
+    text-align: center;
+}
+.face{
+    position:absolute;
+    width: 40px;
+    top: 0;
+    margin-top: -3px;
+    left: 21px;
+}
+.hatDrop .horn,.rightBlower .rightHorn {
+    position: absolute;
+    width: 80px;
+}
+.rope{
+    width:100%;
+    border-top: 2px solid #555;
+    position:absolute;
+    top: 80px;
+}
+.hatDrop {
+    position: absolute;
+    top: 80px;
+    left: -60px;
+    z-index:200;
+}
+.hatDrop .bigWheel{
+    position: absolute;
+    left: 0;
+    margin-left: 15px;
+    top: 0;
+    margin-top: -50px;
+    width: 50px;
+    animation: 1.0s linear infinite clockwise;
+    animation-play-state: inherit;
+}
+.hatDrop .smallWheel{
+  left: 0;
+  position: absolute;
+  width: 25px;
+  animation: 1.0s linear infinite counterClockwise;
+  animation-play-state: inherit;
+}
+.hatDrop .smallWheel1{
+  margin-left:-25px;
+}
+.hatDrop .smallWheel2{
+    margin-left: 80px;
+}
+.hatDrop .horn{
+    top: 0;
+    margin-top: 85px;
+    margin-left: -40px;
+    left: 75px;
+    z-index: 10;
+}
+.rightBlower .rightHorn{
+    top: 0;
+    left:0;
+    margin-top: -48px;
+    margin-left: -85px;
+    z-index: 10;
+}
+.hatDrop .mount,.rightBlower .rightMount {
+    position: absolute;
+    width: 80px;
+    z-index: 20;
+}
+.rightBlower {
+    position: absolute;
+    top: 55%;
+    left: calc(100% - 80px);
+}
+.umbrellas {
+    position: absolute;
+    width: 50px;
+    margin-left: 10px;
+    bottom:0;
+}
+.score{
+    z-index:11;
+    position: absolute;
+    color: #666;
+    font-size:16px;
+    top: calc(40% + 24px);
+    left: calc(50% - 24px);
+    font-face: Helvetica,arial,sans;
+    text-align: center;
+    line-height: 1.0;
+}
+.scoreNum{
+    font-size: 24px;
+    color: #666;
+}
+.scoreNum.left{
+    text-align: left;
+    margin-left: -5px;
+}
+.scoreNum.right{
+    text-align: right;
+    margin-right: -5px;
+}
+.leftSconce,.rightSconce {
+    width: 50px;
+    position: absolute;
+    top: 50%;
+    z-index:10;
+}
+.leftSconce {
+    left: 50px;
+
+}
+.rightSconce {
+    left: calc(100% - 100px);
+
+}
+
+.mirror {
+    width: 160px;
+    position: absolute;
+    top: calc(40% - 40px);
+    left: calc(50% - 80px);
+    z-index:10;
+}
+.mirrorMountLeft, .mirrorMountRight {
+    position: absolute;
+    top: calc(19%);
+    height: calc(19% + 70px);
+    z-index: 5;
+}
+.mirrorMountLeft{
+    border-left: 1px solid #b1b1b1;
+    left: calc(50% - 75px);
+}
+.mirrorMountLeft:before, .mirrorMountRight:before{
+    content: "|";
+    font-size: 20px;
+    font-weight: bold;
+    width: 10px;
+    color: #ccc;
+    z-index:20;
+}
+.mirrorMountLeft:before {
+    margin-left: -6px;
+}
+.mirrorMountRight{
+    left: calc(50% + 70px);
+    border-right: 1px solid #b1b1b1;
+}
+
+.mirrorMountRight:before{
+    margin-right: -6px;
+}
+@keyframes clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes counterClockwise {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+.settings {
+    position: absolute;
+    width: 400px;
+    height: 450px;
+    top: calc(50% - 225px);
+    left: calc(50% - 200px);
+    border: 1px solid #333;
+    border-radius: 15px;
+    background-color: #333;
+    opacity: .95;
+    z-index: 300;
+    font-family: Helvetica;
+}
+.settings h2{
+     font-size: 18px;
+     color: #fff;
+     padding: 5px 10px 0 20px;
+     box-sizing: border-box;
+     width: calc(100% - 50px);
+ }
+.settings  a {
+    display: inline-block;
+    width: 100%;
+}
+.settings .header {
+    display:flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+
+.settings a.close {
+    opacity: .5;
+    position: relative;
+    box-sizing: border-box;
+    width: 50px;
+    margin: 20px 0 0 20px;
+}
+.settings  a.close:before, .settings a.close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 20px;
+    width: 2px;
+    background-color: #fff;
+}
+.settings a.close:before {
+    transform: rotate(45deg);
+}
+.settings a.close:after {
+    transform: rotate(-45deg);
+}
+.settings .content {
+    margin: 20px;
+}
+.settings .formRow {
+    display: block;
+    margin: 0 0 10px 0;
+}
+.settings fieldset {
+    margin: 0;
+    border: 0;
+}
+.settings legend {
+    font-size: 18px;
+    color: #fff;
+}
+.settings label {
+    color: #fff;
+    font-size: 18px;
+    margin-left: 20px;
+}
+
+.settings .formRow {
+  margin-left: 20px;
+}
+.hidden {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap; /* added line */
+}
+.buttons {
+    display:flex;
+    flex-flow: row nowrap;
+    justify-content: right;
+    margin: 20px 0;
+}
+.buttons button{
+    flex-basis: 1;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #eee;
+    color: #666;
+    border-radius: 25px;
+    border:none;
+}
+.buttons button.left{
+    font-family: Helvetica;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.sprite .minus,.sprite .plus {
+    position: absolute;
+    font-size: 20px;
+    width: 5px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.sprite .minus{
+    left: 40px;
+    top: 10px;
+}
+.sprite .plus{
+    left: 120px;
+    top: 10px;
+}
+
+#speedGauge {
+    min-height: 60px;
+}
+#speedGauge .sprite{
+    position: relative;
+}
+
+.speedGauge {
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 60px;
+    width: 60px;
+    overflow: hidden;
+}
+.speedGauge .gauge0, .speedGauge .gauge1,.speedGauge .gauge2,.speedGauge .gauge3,.speedGauge .gauge4 {
+    positon:absolute;
+    height:25px;
+    width: 300px;
+    top: 0;
+}
+.speedGauge .gauge {
+    left: 0;
+}
+.speedGauge .gauge1 {
+    margin-left:-61px;
+}
+.speedGauge .gauge2 {
+    margin-left: -123px;
+}
+.speedGauge .gauge3 {
+    margin-left: -184px;
+}
+.speedGauge .gauge4 {
+    margin-left: -246px;
+}
+.spinner {
+    width: 50px;
+    height: 50px;
+}
+@keyframes spinner {
+    0% {
+        transform:  rotate(0deg);
+    }
+    100% {
+        transform:  rotate(360deg);
+    }
+}
+.spinner img{
+    width: 101px;
+    height: 101px;
+    animation: 2.0s linear infinite spinner;
+    animation-play-state: inherit;
+    position: absolute;
+    top: calc(50% - 80px);
+    left: calc(50% - 50px);
+
+}
+.loading{
+    position: absolute;
+    top: calc(50% + 60px);
+    left: calc(50% - 40px);
+    text-align: center;
+    font-size: 21px;
+    font-family: Verdana;
+}
