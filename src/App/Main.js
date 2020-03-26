@@ -3,15 +3,15 @@ import Hat from "../Components/Hat";
 import Busts from "../Components/Busts";
 import HatDrop from "../Components/HatDrop";
 import Mirror from "../Components/Mirror";
-import Settings from "../Components/Settings"
+import Settings from "../Components/Settings";
 import styles from "../css/styles.css";
 
 let hatArr = [];
-let hatInterval;
 let hatCount = 0;
 let rightWall;
 let appHeight;
 let speedometer;
+let frameReq = null;
 
 const hatHeight = 50;
 const hatWidth = 50;
@@ -20,7 +20,6 @@ const halfBustWidth = 33;
 const halfHatWidth = 25;
 const wiggleRoom = 20;
 const numOfHats = 6;
-
 
 class Main extends React.Component {
   constructor(props) {
@@ -34,7 +33,7 @@ class Main extends React.Component {
       showSettings: false,
       speed: "gradualSpeed",
       bestOf: 50,
-      phase:0
+      phase: 0
     };
   }
 
@@ -53,7 +52,8 @@ class Main extends React.Component {
           this.landHat(hatInd, bustInd);
         } else if (
           (+hat[0] + hatHeight > bust[0] &&
-            (+hat[1] + hatWidth >= bust[1] && +hat[1] < bust[1] + bustWidth)) ||
+            +hat[1] + hatWidth >= bust[1] &&
+            +hat[1] < bust[1] + bustWidth) ||
           +hat[1] + hatWidth > rightWall ||
           +hat[1] < 0
         ) {
@@ -97,50 +97,56 @@ class Main extends React.Component {
   };
 
   removeHat = hat => {
-    clearInterval(hatInterval);
-    let hatObjs = this.state.hats;
+    let self = this;
+    window.cancelAnimationFrame(frameReq);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          let hatObjs = this.state.hats;
+          hatObjs = hatObjs.filter((obj, ind) => {
+            return ind !== hat;
+          });
+          hatArr = hatArr.filter((obj, ind) => {
+            return ind !== hat;
+          });
+          self.setState({ hats: hatObjs, total: self.state.total + 1 }, () => {
+            if (this.state.speed === "gradualSpeed") {
+              if (this.state.bestOf === 30) {
+                if (this.state.total % 6 === 0) {
+                  speedometer.className = "";
+                  speedometer.classList.add("gauge" + this.state.total / 6);
+                  this.setState({ phase: this.state.total / 6 });
+                }
+              } else if (this.state.bestOf === 50) {
+                if (this.state.total % 10 === 0) {
+                  speedometer.className = "";
+                  speedometer.classList.add("gauge" + this.state.total / 10);
+                  this.setState({ phase: this.state.total / 10 });
+                }
+              } else if (this.state.bestOf === 100) {
+                if (this.state.total % 20 === 0) {
+                  speedometer.className = "";
+                  speedometer.classList.add("gauge" + this.state.total / 20);
+                  this.setState({ phase: this.state.total / 20 });
+                }
+              } else if (this.state.bestOf === 200) {
+                if (this.state.total % 40 === 0) {
+                  speedometer.className = "";
+                  speedometer.classList.add("gauge" + this.state.total / 40);
+                  this.setState({ phase: this.state.total / 40 });
+                }
+              }
+            }
 
-    hatObjs = hatObjs.filter((obj, ind) => {
-      return ind !== hat;
-    });
-    hatArr = hatArr.filter((obj, ind) => {
-      return ind !== hat;
-    });
-    this.setState({ hats: hatObjs, total: this.state.total + 1 }, () => {
-      clearInterval(hatInterval);
-      if(this.state.speed === "gradualSpeed") {
-        if(this.state.bestOf === 30) {
-          if (this.state.total % 6 === 0) {
-            speedometer.className = "";
-            speedometer.classList.add("gauge" + this.state.total / 6);
-            this.setState({phase: this.state.total / 6})
-          }
-        } else if(this.state.bestOf === 50) {
-          if (this.state.total % 10 === 0) {
-            speedometer.className = "";
-            speedometer.classList.add("gauge" + this.state.total / 10);
-            this.setState({phase: this.state.total / 10})
-          }
-        } else if(this.state.bestOf === 100) {
-          if (this.state.total % 20 === 0) {
-            speedometer.className = "";
-            speedometer.classList.add("gauge" + this.state.total / 20);
-            this.setState({phase: this.state.total / 20})
-          }
-        } else if(this.state.bestOf === 200) {
-          if (this.state.total % 40 === 0) {
-            speedometer.className = "";
-            speedometer.classList.add("gauge" + this.state.total / 40);
-            this.setState({phase: this.state.total / 40})
-          }
+            if (self.state.total >= self.state.bestOf) {
+              self.props.gameOver(self.state.score, self.state.total);
+            }
+          });
+          resolve(true);
+        } catch (err) {
+          reject(err);
         }
-      }
-
-
-      if (this.state.total >= this.state.bestOf) {
-        this.props.gameOver(this.state.score, this.state.total);
-      }
-      this.moveHats();
+      }, 1);
     });
   };
 
@@ -158,70 +164,69 @@ class Main extends React.Component {
 
     data.concat("hat" + hatNum);
     hatArr.push(data);
-    this.setState({ hats }, () => {
-      clearInterval(hatInterval);
-      this.moveHats();
-    });
+    this.setState({ hats }, () => {});
   };
 
   addBusts = busts => {
     this.setState({ busts });
   };
 
-  moveHats = () => {
+  moveHats = async timestamp => {
     let hats = document.getElementsByClassName("hat");
+    let self = this;
 
-    hatInterval = setInterval(() => {
-      if (hatArr.length > 0) {
-        for (let i = 0; i < hats.length; i++) {
-          if (hatArr[i][2] === true) {
-            if (hatArr[i][0] > appHeight) {
-              this.removeHat(i);
-              break;
-            }
-            let topVal = hatArr[i][0] + hatArr[i][3];
-            let leftVal = hatArr[i][1] + hatArr[i][4];
-            let rotation = hatArr[i][5] + 3;
-
-            hats[i].style.top = topVal + "px";
-            hats[i].style.left = leftVal + "px";
-            hats[i].style.transform = "rotate(" + rotation + "deg)";
-            hats[i].style.display = "block";
-            hats[i].classList.add("hatAfter");
-            hatArr[i] = [
-              topVal,
-              leftVal,
-              true,
-              hatArr[i][3],
-              hatArr[i][4],
-              rotation
-            ];
-            this.hitTest();
+    if (hatArr.length > 0) {
+      for (let i = 0; i < hats.length; i++) {
+        if (hatArr[i][2] === true) {
+          if (hatArr[i][0] > appHeight) {
+            await self.removeHat(i);
+            break;
           }
+          let topVal = hatArr[i][0] + hatArr[i][3];
+          let leftVal = hatArr[i][1] + hatArr[i][4];
+          let rotation = hatArr[i][5] + 3;
+
+          hats[i].style.top = topVal + "px";
+          hats[i].style.left = leftVal + "px";
+          hats[i].style.transform = "rotate(" + rotation + "deg)";
+          hats[i].style.display = "block";
+          hats[i].classList.add("hatAfter");
+          hatArr[i] = [
+            topVal,
+            leftVal,
+            true,
+            hatArr[i][3],
+            hatArr[i][4],
+            rotation
+          ];
+          this.hitTest();
         }
       }
-    }, 30);
+    }
+    frameReq = window.requestAnimationFrame(self.moveHats);
   };
 
   showSettings = () => {
-    this.setState({showSettings: !this.state.showSettings})
-  }
+    this.setState({ showSettings: !this.state.showSettings });
+  };
 
-  applySettings = (e) => {
-    this.setState({total: 0,score:0})
-    let speed = e.target.form.speed.value;
-    let bestOf = e.target.form.bestOf.value;
-    let phase = e.target.form.phase.value;
-    if(speed === "setSpeed") {
-        speedometer.className = "";
-        speedometer.classList.add("gauge" + phase);
+  applySettings = e => {
+    let form = e.target.form;
+
+    this.setState({ total: 0, score: 0 });
+    let speed = form.elements.speed.value;
+    let bestOf = form.elements.bestOf.value;
+    let phase = form.elements.phase.value;
+    if (speed === "setSpeed") {
+      speedometer.className = "";
+      speedometer.classList.add("gauge" + phase);
     }
-    this.setState({bestOf: +bestOf, speed: speed, phase: +phase})
-  }
+    this.setState({ bestOf: +bestOf, speed: speed, phase: +phase });
+  };
 
-  closeSettings = (e) => {
+  closeSettings = e => {
     e.preventDefault();
-    this.setState({showSettings: false})
+    this.setState({ showSettings: false });
   };
 
   winResized = () => {
@@ -236,6 +241,7 @@ class Main extends React.Component {
   };
 
   componentDidMount() {
+    if (frameReq !== null) window.cancelAnimationFrame(frameReq);
     addEventListener("resize", () => {
       this.winResized();
     });
@@ -249,12 +255,17 @@ class Main extends React.Component {
     rightWall = Math.round(parseInt(rightWall.substr(0, rightWall.length - 2)));
 
     speedometer = document.getElementById("gauge");
+    this.moveHats();
   }
 
   componentWillUnmount() {
-    clearInterval(hatInterval);
+    window.cancelAnimationFrame(frameReq);
+    removeEventListener("resize", () => {
+      this.winResized();
+    });
     hatCount = 0;
-    hatArr = [];
+    hatArr.length = 0;
+    frameReq = null;
   }
 
   render() {
@@ -262,7 +273,9 @@ class Main extends React.Component {
     return (
       <div className="app" id="app">
         <div className="gutter1">
-          <img src="src/svg/settings.svg" width="30px"
+          <img
+            src="src/svg/settings.svg"
+            width="30px"
             className="settingsIcon"
             onClick={e => this.showSettings(e)}
           />
@@ -287,7 +300,7 @@ class Main extends React.Component {
             addHat={this.addHat}
             rightWall={rightWall}
             phase={this.state.phase}
-            showSettings = {this.state.showSettings}
+            showSettings={this.state.showSettings}
           />
           {this.state.hats.map(hatObj => hatObj)}
           <Busts
@@ -299,15 +312,15 @@ class Main extends React.Component {
             <div className="molding" />
             <div className="wallPaper" />
           </div>
-          {this.state.showSettings === true &&
-              <Settings
-                 closeHandler={this.closeSettings}
-                 applyChanges={this.applySettings}
-                 bestOf={this.state.bestOf}
-                 selectedSpeed={this.state.speed}
-                 phase={this.state.phase}
-                 />
-          }
+          {this.state.showSettings === true && (
+            <Settings
+              closeHandler={this.closeSettings}
+              applyChanges={this.applySettings}
+              bestOf={this.state.bestOf}
+              selectedSpeed={this.state.speed}
+              phase={this.state.phase}
+            />
+          )}
         </main>
         <div className="gutter2" />
       </div>
