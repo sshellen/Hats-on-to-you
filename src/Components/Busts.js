@@ -3,26 +3,23 @@ import Bust from "./Bust";
 import ImageContext from "../Components/Context";
 
 let bustsTop;
-let total;
-let umbrellas;
 let bustArr = [];
 let bustInterval;
 let bustCount = 0;
 let currChangedBust = "";
 let bustHeight = 250;
 let speed = 5;
+let bustAnimFrame = null;
 
 class Busts extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = { busts: [], changedBust: "" };
   }
 
-  moveBusts = () => {
+  moveBusts = timeframe => {
     let busts = document.getElementsByClassName("bust");
-
-    bustInterval = setInterval(() => {
+    bustInterval = setTimeout(() => {
       for (let i = 0; i < busts.length; i++) {
         let bustLeft = bustArr[i][1] - speed;
         busts[i].style.left = bustLeft + "px";
@@ -31,10 +28,10 @@ class Busts extends React.Component {
           bustArr.splice(0, 1);
           let rightMost = bustArr[bustArr.length - 1][1];
           bustArr.push([bustsTop, parseInt(800), ""]);
-
           this.addBusts();
         }
       }
+      bustAnimFrame = window.requestAnimationFrame(this.moveBusts);
     }, 60);
   };
 
@@ -54,7 +51,6 @@ class Busts extends React.Component {
         />
       );
     });
-
     this.setState({ busts: bustObjs }, () => {
       this.props.addBusts(bustArr);
     });
@@ -66,6 +62,7 @@ class Busts extends React.Component {
       this.changedBust(this.props.changedBust);
     }
   }
+
   changedBust(bust) {
     let arr = bust.split("_");
     bustArr = bustArr.map((val, ind) => {
@@ -112,21 +109,32 @@ class Busts extends React.Component {
       [bustsTop, 800]
     ];
     this.addBusts();
-    this.moveBusts();
+    bustAnimFrame = window.requestAnimationFrame(this.moveBusts);
   }
 
   componentWillUnmount() {
-    clearInterval(bustInterval);
+    window.clearTimeout(bustInterval);
+    window.cancelAnimationFrame(bustAnimFrame);
+    bustAnimFrame = null;
+    removeEventListener("resize", () => {
+      this.winResized();
+    });
+    bustArr.length = 0;
+    bustCount = 0;
+    currChangedBust = "";
   }
+
   render() {
     const { changedBust } = this.props;
     return (
       <ImageContext.Consumer>
-      {value => (
-        <div>
-          <div className="busts">{this.state.busts.map(bustObj => bustObj)}</div>
-        </div>
-      )}
+        {value => (
+          <div>
+            <div className="busts">
+              {this.state.busts.map(bustObj => bustObj)}
+            </div>
+          </div>
+        )}
       </ImageContext.Consumer>
     );
   }
